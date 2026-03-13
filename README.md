@@ -25,6 +25,33 @@ python main.py --url "https://www.grants.gov/search-results-detail/351715" --out
 
 The pipeline requires stability against constantly mutating Federal API schemas and legacy HTML websites. To achieve this, the architecture is strictly decoupled into **4 Core Layers**.
 
+```mermaid
+graph TD
+    A[FOA URL Input] --> B{Layer 1: Fetcher}
+    
+    B -- "Grants.gov Node" --> C[Direct JSON REST API]
+    B -- "NSF.gov Node" --> D[HTML Requests & Headers]
+    B -- ".pdf Ext" --> E[Raw PDF Bytes]
+    
+    C --> F{Layer 2: Parser}
+    D --> F
+    E --> F
+    
+    F -- "parse_json()" --> G[Nested JSON Array Flattening]
+    F -- "parse_html()" --> H[BeautifulSoup Tag Stripping]
+    
+    G --> I[Layer 3: Normalizing Extractor]
+    H --> I
+    
+    I -- Regex & Schema Enforcement --> J[Normalized foa.json]
+    
+    J --> K[Layer 4: Hybrid Semantic Tagger]
+    K -- "SpaCy + sentence-transformers" --> L[(Final foa.csv & foa.json)]
+    
+    classDef layer fill:#f9f,stroke:#333,stroke-width:2px;
+    class B,F,I,K layer;
+```
+
 ### Layer 1: The Intelligent Fetcher (`fetcher.py`)
 Federal URLs route dynamically and frequently block standard web-scrapers. `fetcher.py` inspects the URLs proactively to decide *how* to extract the data.
 
@@ -81,7 +108,25 @@ def get_close_date(sections, plain_text):
 ```
 
 ### Layer 4: Hybrid Semantic Tagger (`tagger.py`)
+
 The semantic tagger is responsible for classifying scientific domains. If a proposal mentions "Eclipse mapping models," it must be tagged as *Space Science*, even if those exact words are missing.
+
+```mermaid
+flowchart LR
+    A[Extracted FOA Text] --> B{Evaluator Engine}
+        
+    B -->|Phase 1| C[Deterministic NLP]
+    C --> D[SpaCy Rules Engine]
+    D -- "Exact Match 'HPC'" --> E(Tag: High Performance Computing)
+    
+    B -->|Phase 2| F[Vector Embeddings]
+    F --> G[HuggingFace MiniLM]
+    G -- "Encode to Dense Vector" --> H[Cosine Similarity Engine]
+    H -- "Semantic Match > 0.30" --> I(Tag: Space Science)
+    
+    E --> J[Merged Tags Array]
+    I --> J
+```
 
 **Why this approach?** Our tagger relies on a hybrid NLP execution approach:
 1.  **Deterministic NLP (spaCy):** A rule-based scanner crawls the document array to map exact keyword constraints (e.g., `HPC` matching rapidly to `High Performance Computing`).
