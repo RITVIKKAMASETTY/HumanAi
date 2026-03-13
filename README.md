@@ -143,5 +143,3 @@ python main.py --url "https://www.grants.gov/search-results-detail/360664" --out
 ```bash
 python main.py --url "https://www.nsf.gov/pubs/2023/nsf23561/nsf23561.htm" --out_dir ./out
 ```
-
-*(This assignment strictly adheres to all specified requirements from the HumanAi screening assessment criteria).*
