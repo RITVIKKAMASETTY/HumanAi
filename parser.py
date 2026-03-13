@@ -27,8 +27,8 @@ def parse_json(data: dict) -> dict:
     sections = {}
     if data.get("opportunityNumber"):
         sections["opportunity number"] = data["opportunityNumber"]
-    if synopsis.get("opportunityTitle"):
-        sections["opportunity title"] = synopsis["opportunityTitle"]
+    if data.get("opportunityTitle"):
+        sections["opportunity title"] = data["opportunityTitle"]
     if synopsis.get("agencyName"):
         sections["agency"] = synopsis["agencyName"]
     if synopsis.get("synopsisDesc"):
