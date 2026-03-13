@@ -56,6 +56,25 @@ def parse_json(data: dict) -> dict:
     if synopsis.get("costSharing") is not None:
         sections["cost sharing"] = synopsis.get("costSharing")
         
+    # Additional Deep Metadata
+    if data.get("cfdaList"):
+        sections["cfda"] = ", ".join(data.get("cfdaList", []))
+    if synopsis.get("agencyContactName"):
+        sections["contact name"] = synopsis.get("agencyContactName")
+    if synopsis.get("agencyContactEmail"):
+        sections["contact email"] = synopsis.get("agencyContactEmail")
+        
+    instruments = synopsis.get("fundingInstruments", [])
+    if instruments:
+        sections["funding instrument"] = "; ".join(i.get("description", "") for i in instruments)
+        
+    activities = synopsis.get("fundingActivityCategories", [])
+    if activities:
+        sections["activity category"] = "; ".join(a.get("description", "") for a in activities)
+        
+    if synopsis.get("archiveDateStr"):
+        sections["archive date"] = synopsis.get("archiveDateStr")
+        
     # Handle Eligibility
     applicants = synopsis.get("applicantTypes", [])
     if applicants:
