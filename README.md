@@ -15,9 +15,21 @@ python -m spacy download en_core_web_sm
 python main.py --url "https://www.grants.gov/search-results-detail/351715" --out_dir ./out
 ```
 
-**Outputs:**
+**Outputs Target Directory:**
+As requested, by pointing `--out_dir` to `./out`, the pipeline generates the final deliverables:
 - `out/foa.json`: The fully-extracted schema with populated fields and semantic tags.
 - `out/foa.csv`: A flattened, comma-separated version optimized for relational database ingest.
+
+---
+
+## 📦 Submission Artifacts
+
+Per the screening requirements, the following five artifacts are explicitly included and maintained in this repository:
+1.  `main.py` — The core CLI entry point that initializes the ETL pipeline.
+2.  `requirements.txt` — Frozen dependency list (includes `requests`, `beautifulsoup4`, `spacy`, `sentence-transformers`).
+3.  `README.md` — This technical architecture document detailing the approach.
+4.  `out/foa.json` — The completed JSON extraction for the test FOA (Grants.gov 351715) containing all fields and semantic tags.
+5.  `out/foa.csv` — The flattened tabular export array of the same parsed target.
 
 ---
 
