@@ -1,0 +1,15 @@
+[project]
+name = "screening-round"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "beautifulsoup4>=4.14.3",
+    "bs4>=0.0.2",
+    "numpy>=2.4.3",
+    "pdfminer-six>=20260107",
+    "requests>=2.32.5",
+    "sentence-transformers>=5.3.0",
+    "spacy>=3.8.11",
+]
