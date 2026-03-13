@@ -33,29 +33,28 @@ def parse_json(data: dict) -> dict:
         soup = BeautifulSoup(synopsis["synopsisDesc"], "html.parser")
         sections["description"] = soup.get_text(separator="\n", strip=True)
     
-    # Handle Award Range
-    award_parts = []
-    
+    # Handle discrete Award values
     def _safe_format(val):
         try:
-            return f"${float(val):,.0f}"
+            return float(val)
         except (ValueError, TypeError):
-            return str(val) if val and str(val).lower() != "none" else None
+            return None
 
     floor = _safe_format(synopsis.get("awardFloor"))
-    if floor:
-        award_parts.append(floor)
+    if floor is not None:
+        sections["award floor"] = floor
         
     ceiling = _safe_format(synopsis.get("awardCeiling"))
-    if ceiling:
-        award_parts.append(ceiling)
+    if ceiling is not None:
+        sections["award ceiling"] = ceiling
         
     total = _safe_format(synopsis.get("estimatedTotalProgramFunding"))
-    if not award_parts and total:
-        award_parts.append(total)
+    if total is not None:
+        sections["total program funding"] = total
         
-    if award_parts:
-        sections["award amount"] = " - ".join(award_parts)
+    # Cost Sharing
+    if synopsis.get("costSharing") is not None:
+        sections["cost sharing"] = synopsis.get("costSharing")
         
     # Handle Eligibility
     applicants = synopsis.get("applicantTypes", [])

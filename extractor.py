@@ -68,8 +68,6 @@ def extract_fields(parsed: dict, source_url: str) -> dict:
     open_date = _parse_iso_date(_from_sections(sections, OPEN_DATE_KEYS) or _from_label(plain_text, OPEN_DATE_KEYS) or _regex_date(plain_text, ["open", "release", "posted", "issuance"]))
     eligibility = _from_sections(sections, ELIGIBILITY_KEYS) or _from_label(plain_text, ELIGIBILITY_KEYS)
     description = _from_sections(sections, DESCRIPTION_KEYS) or _from_label(plain_text, DESCRIPTION_KEYS) or _fallback_description(plain_text)
-    award_range = _from_sections(sections, AWARD_KEYS) or _from_label(plain_text, AWARD_KEYS) or _regex_award(plain_text)
-
     return {
         "foa_id": foa_id,
         "title": _clean(title),
@@ -77,8 +75,11 @@ def extract_fields(parsed: dict, source_url: str) -> dict:
         "open_date": open_date,
         "close_date": close_date,
         "eligibility": _clean(eligibility) or _clean(sections.get("eligibility")),
+        "award_floor": sections.get("award floor"),
+        "award_ceiling": sections.get("award ceiling"),
+        "total_program_funding": sections.get("total program funding"),
+        "cost_sharing_required": sections.get("cost sharing"),
         "description": _clean(description),
-        "award_range": _clean_single_line(award_range) or _clean_single_line(sections.get("award amount")),
         "source_url": source_url,
     }
 
