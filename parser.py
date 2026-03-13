@@ -32,14 +32,41 @@ def parse_json(data: dict) -> dict:
     if synopsis.get("synopsisDesc"):
         soup = BeautifulSoup(synopsis["synopsisDesc"], "html.parser")
         sections["description"] = soup.get_text(separator="\n", strip=True)
-    if synopsis.get("estimatedTotalProgramFunding"):
-        sections["award amount"] = f"${synopsis['estimatedTotalProgramFunding']:,.0f}"
+    
+    # Handle Award Range
+    award_parts = []
+    
+    def _safe_format(val):
+        try:
+            return f"${float(val):,.0f}"
+        except (ValueError, TypeError):
+            return str(val) if val and str(val).lower() != "none" else None
+
+    floor = _safe_format(synopsis.get("awardFloor"))
+    if floor:
+        award_parts.append(floor)
+        
+    ceiling = _safe_format(synopsis.get("awardCeiling"))
+    if ceiling:
+        award_parts.append(ceiling)
+        
+    total = _safe_format(synopsis.get("estimatedTotalProgramFunding"))
+    if not award_parts and total:
+        award_parts.append(total)
+        
+    if award_parts:
+        sections["award amount"] = " - ".join(award_parts)
+        
+    # Handle Eligibility
+    applicants = synopsis.get("applicantTypes", [])
+    if applicants:
+        sections["eligibility"] = "; ".join(a.get("description", "") for a in applicants)
     
     # Add dates
-    if data.get("openDate"):
-        sections["open date"] = data["openDate"]
-    if data.get("closeDate"):
-        sections["close date"] = data["closeDate"]
+    if data.get("openDate") or synopsis.get("postingDateStr"):
+        sections["open date"] = synopsis.get("postingDateStr") or data.get("openDate")
+    if data.get("closeDate") or synopsis.get("responseDateStr"):
+        sections["close date"] = synopsis.get("responseDateStr") or data.get("closeDate")
 
     plain_text = "\n".join(f"{k}: {v}" for k, v in sections.items())
     return {"soup": None, "plain_text": plain_text, "sections": sections}

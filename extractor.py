@@ -76,9 +76,9 @@ def extract_fields(parsed: dict, source_url: str) -> dict:
         "agency": _clean_single_line(agency) or "National Science Foundation",
         "open_date": open_date,
         "close_date": close_date,
-        "eligibility": _clean(eligibility),
+        "eligibility": _clean(eligibility) or _clean(sections.get("eligibility")),
         "description": _clean(description),
-        "award_range": _clean_single_line(award_range),
+        "award_range": _clean_single_line(award_range) or _clean_single_line(sections.get("award amount")),
         "source_url": source_url,
     }
 
