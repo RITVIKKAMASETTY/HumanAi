@@ -1,39 +1,59 @@
 import argparse
 import sys
-
+import os
+import warnings
+import logging
 from fetcher import fetch
 from parser import parse_html, parse_pdf, parse_json
 from extractor import extract_fields
 from tagger import tag
 from exporter import export
 
+# Suppress all the noisy 3rd party warnings (spaCy, HuggingFace, sentence-transformers)
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+warnings.filterwarnings("ignore", category=UserWarning)
+logging.getLogger("transformers").setLevel(logging.ERROR)
+logging.getLogger("sentence_transformers").setLevel(logging.ERROR)
+logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
+
+
+class Colors:
+    BLUE = '\033[94m'
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    ENDC = '\033[0m'
+
 
 def build_pipeline(url: str, out_dir: str) -> None:
-    print(f"Fetching: {url}")
+    print(f"\n{Colors.BOLD}{Colors.BLUE} Starting FOA Extraction Pipeline{Colors.ENDC}")
+    print(f"{Colors.CYAN}➤ Fetching:{Colors.ENDC} {url}")
     response = fetch(url)
 
     if response.get("is_json"):
-        print("Detected JSON API content")
+        print(f"{Colors.GREEN}✓ Detected JSON API content{Colors.ENDC}")
         parsed = parse_json(response["json_data"])
     elif response.get("is_pdf"):
-        print("Detected PDF content")
+        print(f"{Colors.GREEN}✓ Detected PDF content{Colors.ENDC}")
         parsed = parse_pdf(response["raw_bytes"])
     else:
-        print("Detected HTML content")
+        print(f"{Colors.GREEN}✓ Detected HTML content{Colors.ENDC}")
         parsed = parse_html(response["text"])
 
-    print("Extracting fields")
+    print(f"{Colors.CYAN}➤ Extracting fields{Colors.ENDC}")
     foa = extract_fields(parsed, url)
 
-    print("Applying semantic tags")
+    print(f"{Colors.CYAN}➤ Applying semantic tags{Colors.ENDC}")
     tags = tag(foa)
 
-    print(f"Exporting to {out_dir}")
+    print(f"{Colors.CYAN}➤ Exporting to {out_dir}{Colors.ENDC}")
     paths = export(foa, tags, out_dir)
 
-    print(f"  JSON: {paths['json']}")
-    print(f"  CSV:  {paths['csv']}")
-    print("Done")
+    print(f"  {Colors.BOLD}JSON:{Colors.ENDC} {paths['json']}")
+    print(f"  {Colors.BOLD}CSV:{Colors.ENDC}  {paths['csv']}")
+    print(f"\n{Colors.BOLD}{Colors.GREEN}✨ Done! FOA pipeline execution completed successfully.{Colors.ENDC}\n")
 
 
 def main() -> None:
@@ -47,7 +67,7 @@ def main() -> None:
     try:
         build_pipeline(args.url, args.out_dir)
     except RuntimeError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
+        print(f"{Colors.RED}{Colors.BOLD}Error:{Colors.ENDC} {exc}", file=sys.stderr)
         sys.exit(1)
 
 
