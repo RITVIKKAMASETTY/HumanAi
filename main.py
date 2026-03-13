@@ -3,11 +3,11 @@ import sys
 import os
 import warnings
 import logging
-from fetcher import fetch
-from parser import parse_html, parse_pdf, parse_json
-from extractor import extract_fields
-from tagger import tag
-from exporter import export
+from src.fetcher import fetch
+from src.parser import parse_html, parse_pdf, parse_json
+from src.extractor import extract_fields
+from src.tagger import tag
+from src.exporter import export
 
 # Suppress all the noisy 3rd party warnings (spaCy, HuggingFace, sentence-transformers)
 os.environ["TOKENIZERS_PARALLELISM"] = "false"

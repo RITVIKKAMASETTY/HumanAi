@@ -1,7 +1,7 @@
 from typing import Optional
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
-from ontology import RULE_KEYWORDS, RESEARCH_DOMAINS, METHODS, POPULATIONS, SPONSOR_THEMES
+from src.ontology import RULE_KEYWORDS, RESEARCH_DOMAINS, METHODS, POPULATIONS, SPONSOR_THEMES
 
 _model: Optional[SentenceTransformer] = None
 SIMILARITY_THRESHOLD = 0.30

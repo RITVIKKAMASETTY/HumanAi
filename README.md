@@ -2,6 +2,13 @@
 
 This repository contains a robust Python-based data pipeline built to ingest Funding Opportunity Announcements (FOA) from **Grants.gov API** and **NSF.gov HTML Pages**. It aggressively extracts explicit requirements into a strict schema and autonomously applies deterministic & semantic NLP tags.
 
+### Inputs (What is being scraped)
+![website](images/website.png)
+![web](images/web.png)
+
+### Output (JSON format)
+![json_result](images/json_result.png)
+
 ##  Quickstart
 
 Ensure you have Python 3.12+ (managed by `uv` for speed, or via standard `pip`). 
@@ -12,7 +19,7 @@ pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 
 # 2. Run the Extractor
-python main.py --url "https://www.grants.gov/search-results-detail/351715" --out_dir ./out
+python main.py --url "https://www.grants.gov/search-results-detail/353475" --out_dir ./out
 ```
 
 **Outputs Target Directory:**
@@ -37,7 +44,7 @@ Per the screening requirements, the following five artifacts are explicitly incl
 
 The pipeline requires stability against constantly mutating Federal API schemas and legacy HTML websites. To achieve this, the architecture is strictly decoupled into **4 Core Layers**.
 
-![flow](flow.png)
+![flow](images/flow.png)
 
 ### Layer 1: The Intelligent Fetcher (`fetcher.py`)
 Federal URLs route dynamically and frequently block standard web-scrapers. `fetcher.py` inspects the URLs proactively to decide *how* to extract the data.
@@ -98,7 +105,7 @@ def get_close_date(sections, plain_text):
 
 The semantic tagger is responsible for classifying scientific domains. If a proposal mentions "Eclipse mapping models," it must be tagged as *Space Science*, even if those exact words are missing.
 
-![evaluate](evaluate.png)
+![evaluate](images/evaluate.png)
 
 **Why this approach?** Our tagger relies on a hybrid NLP execution approach:
 1.  **Deterministic NLP (spaCy):** A rule-based scanner crawls the document array to map exact keyword constraints (e.g., `HPC` matching rapidly to `High Performance Computing`).
