@@ -2,7 +2,7 @@
 
 This repository contains a robust Python-based data pipeline built to ingest Funding Opportunity Announcements (FOA) from **Grants.gov API** and **NSF.gov HTML Pages**. It aggressively extracts explicit requirements into a strict schema and autonomously applies deterministic & semantic NLP tags.
 
-## 🚀 Quickstart
+##  Quickstart
 
 Ensure you have Python 3.12+ (managed by `uv` for speed, or via standard `pip`). 
 
@@ -22,7 +22,7 @@ As requested, by pointing `--out_dir` to `./out`, the pipeline generates the fin
 
 ---
 
-## 📦 Submission Artifacts
+##  Submission Artifacts
 
 Per the screening requirements, the following five artifacts are explicitly included and maintained in this repository:
 1.  `main.py` — The core CLI entry point that initializes the ETL pipeline.
@@ -33,7 +33,7 @@ Per the screening requirements, the following five artifacts are explicitly incl
 
 ---
 
-## 🧠 Deep Architecture Overview
+##  Deep Architecture Overview
 
 The pipeline requires stability against constantly mutating Federal API schemas and legacy HTML websites. To achieve this, the architecture is strictly decoupled into **4 Core Layers**.
 
