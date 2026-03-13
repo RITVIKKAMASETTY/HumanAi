@@ -122,7 +122,7 @@ def _apply_embeddings(text: str, rule_tags: dict) -> dict:
 
 ---
 
-## 🧪 Testing The Outputs
+##  Testing The Outputs
 
 The pipeline supports both generic HTML formats and modern API structural parameters. Try any of the following parameters to see deep semantic ontology tagging in real-time execution.
 
