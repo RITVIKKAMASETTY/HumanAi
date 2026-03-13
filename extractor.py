@@ -77,6 +77,7 @@ def extract_fields(parsed: dict, source_url: str) -> dict:
         "close_date": close_date,
         "archive_date": sections.get("archive date"),
         "eligibility": _clean(eligibility) or _clean(sections.get("eligibility")),
+        "expected_awards": sections.get("expected awards"),
         "award_floor": sections.get("award floor"),
         "award_ceiling": sections.get("award ceiling"),
         "total_program_funding": sections.get("total program funding"),

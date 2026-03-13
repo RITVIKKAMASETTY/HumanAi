@@ -31,9 +31,12 @@ def parse_json(data: dict) -> dict:
         sections["opportunity title"] = data["opportunityTitle"]
     if synopsis.get("agencyName"):
         sections["agency"] = synopsis["agencyName"]
+    # Extract Description Text cleanly
     if synopsis.get("synopsisDesc"):
+        # The user reported words being cut off (e.g., 'ngineering (ECLIPSE)' instead of 'Engineering (ECLIPSE)')
+        # BS4 get_text sometimes joins without spaces if the HTML is weird. Add a space separator.
         soup = BeautifulSoup(synopsis["synopsisDesc"], "html.parser")
-        sections["description"] = soup.get_text(separator="\n", strip=True)
+        sections["description"] = soup.get_text(separator=" ", strip=True)
     
     # Handle discrete Award values
     def _safe_format(val):
@@ -58,11 +61,23 @@ def parse_json(data: dict) -> dict:
     if synopsis.get("costSharing") is not None:
         sections["cost sharing"] = synopsis.get("costSharing")
         
+    # Expected Awards
+    if synopsis.get("expectedNumberOfAwards") is not None:
+        sections["expected awards"] = synopsis.get("expectedNumberOfAwards")
+        
     # Additional Deep Metadata
-    if data.get("cfdaList"):
-        sections["cfda"] = ", ".join(data.get("cfdaList", []))
-    if synopsis.get("agencyContactName"):
+    # CFDA numbers are usually stored in the 'cfdas' list as 'cfdaNumber'
+    cfdas = [c.get("cfdaNumber") for c in data.get("cfdas", []) if c.get("cfdaNumber")]
+    if cfdas:
+        sections["cfda"] = ", ".join(cfdas)
+        
+    # Agency Contact (The 'agencyContactDesc' often has the real underlying contact name/info)
+    contact_desc = synopsis.get("agencyContactDesc", "")
+    if contact_desc:
+        sections["contact name"] = contact_desc.split("\n")[0].strip()
+    elif synopsis.get("agencyContactName"):
         sections["contact name"] = synopsis.get("agencyContactName")
+        
     if synopsis.get("agencyContactEmail"):
         sections["contact email"] = synopsis.get("agencyContactEmail")
         
@@ -75,7 +90,9 @@ def parse_json(data: dict) -> dict:
         sections["activity category"] = "; ".join(a.get("description", "") for a in activities)
         
     if synopsis.get("archiveDateStr"):
-        sections["archive date"] = synopsis.get("archiveDateStr")
+        date_str = synopsis.get("archiveDateStr")
+        # Format "2026-12-16-00-00-00" to "2026-12-16"
+        sections["archive date"] = date_str.split("-00-00")[0]
         
     # Handle Eligibility
     applicants = synopsis.get("applicantTypes", [])
