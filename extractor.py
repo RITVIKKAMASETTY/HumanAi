@@ -70,6 +70,7 @@ def extract_fields(parsed: dict, source_url: str) -> dict:
     description = _from_sections(sections, DESCRIPTION_KEYS) or _from_label(plain_text, DESCRIPTION_KEYS) or _fallback_description(plain_text)
     return {
         "foa_id": foa_id,
+        "opportunity_number": sections.get("opportunity number"),
         "title": _clean(title),
         "agency": _clean_single_line(agency) or "National Science Foundation",
         "open_date": open_date,

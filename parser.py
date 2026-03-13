@@ -25,6 +25,8 @@ def parse_json(data: dict) -> dict:
     
     # Map Grants.gov JSON fields to standard sections
     sections = {}
+    if data.get("opportunityNumber"):
+        sections["opportunity number"] = data["opportunityNumber"]
     if synopsis.get("opportunityTitle"):
         sections["opportunity title"] = synopsis["opportunityTitle"]
     if synopsis.get("agencyName"):

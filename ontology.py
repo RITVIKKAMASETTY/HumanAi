@@ -19,6 +19,18 @@ RESEARCH_DOMAINS = [
     "Engineering",
     "Mathematics",
     "Computer Science",
+    "Cyberinfrastructure",
+    "Plasma Physics",
+    "Space Science",
+    "Geosciences",
+    "Optics & Photonics",
+    "Advanced Manufacturing",
+    "Social Science",
+    "Behavioral Science",
+    "Economic Science",
+    "Astrophysics",
+    "Polar Science",
+    "Ocean Sciences",
 ]
 
 METHODS = [
@@ -35,6 +47,11 @@ METHODS = [
     "Remote Sensing",
     "Genomics",
     "Modeling",
+    "Open Science",
+    "Cloud Computing",
+    "High Performance Computing",
+    "Distributed Systems",
+    "Ethnography",
 ]
 
 POPULATIONS = [
@@ -119,3 +136,19 @@ RULE_KEYWORDS = {
         "Equity and Inclusion": ["equity", "inclusion", "accessible"],
     },
 }
+
+# Update the keywords to include the newly added domains too
+RULE_KEYWORDS["research_domains"].update({
+    "Cyberinfrastructure": ["cyberinfrastructure", "hpc", "computing infrastructure", "data infrastructure"],
+    "Plasma Physics": ["plasma science", "plasma physics", "plasma chemistry", "eclipse"],
+    "Space Science": ["space science", "astrophysics", "astronomy", "telescope"],
+    "Geosciences": ["geosciences", "earth science", "geology", "oceanography"],
+    "Open Science": ["open science", "open access", "open data"],
+    "Information Science": ["information science", "computing", "cise"],
+})
+
+RULE_KEYWORDS["methods"].update({
+    "Open Science": ["open science", "open access", "data sharing", " FAIR data"],
+    "Cloud Computing": ["cloud computing", "cloud storage", "aws", "gcp", "azure", "distributed cloud"],
+    "High Performance Computing": ["high performance computing", "hpc", "supercomputing"],
+})
