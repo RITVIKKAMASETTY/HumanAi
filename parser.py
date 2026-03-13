@@ -20,6 +20,31 @@ def parse_pdf(raw_bytes: bytes) -> dict:
     return {"soup": None, "plain_text": plain_text, "sections": {}}
 
 
+def parse_json(data: dict) -> dict:
+    synopsis = data.get("synopsis", {})
+    
+    # Map Grants.gov JSON fields to standard sections
+    sections = {}
+    if synopsis.get("opportunityTitle"):
+        sections["opportunity title"] = synopsis["opportunityTitle"]
+    if synopsis.get("agencyName"):
+        sections["agency"] = synopsis["agencyName"]
+    if synopsis.get("synopsisDesc"):
+        soup = BeautifulSoup(synopsis["synopsisDesc"], "html.parser")
+        sections["description"] = soup.get_text(separator="\n", strip=True)
+    if synopsis.get("estimatedTotalProgramFunding"):
+        sections["award amount"] = f"${synopsis['estimatedTotalProgramFunding']:,.0f}"
+    
+    # Add dates
+    if data.get("openDate"):
+        sections["open date"] = data["openDate"]
+    if data.get("closeDate"):
+        sections["close date"] = data["closeDate"]
+
+    plain_text = "\n".join(f"{k}: {v}" for k, v in sections.items())
+    return {"soup": None, "plain_text": plain_text, "sections": sections}
+
+
 def _extract_sections(soup: BeautifulSoup) -> dict:
     sections = {}
     headings = soup.find_all(["h1", "h2", "h3", "h4"])

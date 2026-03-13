@@ -2,7 +2,7 @@ import argparse
 import sys
 
 from fetcher import fetch
-from parser import parse_html, parse_pdf
+from parser import parse_html, parse_pdf, parse_json
 from extractor import extract_fields
 from tagger import tag
 from exporter import export
@@ -12,7 +12,10 @@ def build_pipeline(url: str, out_dir: str) -> None:
     print(f"Fetching: {url}")
     response = fetch(url)
 
-    if response["is_pdf"]:
+    if response.get("is_json"):
+        print("Detected JSON API content")
+        parsed = parse_json(response["json_data"])
+    elif response.get("is_pdf"):
         print("Detected PDF content")
         parsed = parse_pdf(response["raw_bytes"])
     else:
